@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/dota2data
+                         ##   username: authmanager
+#      password: hopnetworks
+#      database: dota2data
+#      authentication-database: dota2data
