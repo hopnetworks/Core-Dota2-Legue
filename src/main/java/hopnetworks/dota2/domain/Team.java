@@ -1,6 +1,7 @@
 package hopnetworks.dota2.domain;
 
 import com.mongodb.DBObject;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
@@ -8,16 +9,16 @@ import java.util.List;
 
 public class Team {
    @Id
-private String teamId;
+private ObjectId teamId;
 
 private DBObject playersJson;;
     private String teamName;
 
-    public String getTeamId() {
+    public ObjectId getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(String teamId) {
+    public void setTeamId(ObjectId teamId) {
         this.teamId = teamId;
     }
 
@@ -45,5 +46,15 @@ private DBObject playersJson;;
         this.integration = integration;
     }
 
-    private int integration;
+    private int integration=0;
+
+    public int getGameSum() {
+        return gameSum;
+    }
+
+    public void setGameSum(int gameSum) {
+        this.gameSum = gameSum;
+    }
+
+    private int gameSum=0;
 }

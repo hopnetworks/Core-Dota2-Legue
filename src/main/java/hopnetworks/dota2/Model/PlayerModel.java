@@ -1,30 +1,79 @@
-package hopnetworks.dota2.domain;
+package hopnetworks.dota2.Model;
 
-import org.bson.types.ObjectId;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class Player {
-    public ObjectId getTeamId() {
-        return teamId;
+public class PlayerModel {
+    @Override
+    public String toString() {
+        return "PlayerModel{" +
+                "cluster=" + cluster +
+                ", death=" + death +
+                ", palyer_solt=" + palyer_solt +
+                ", assists=" + assists +
+                ", account_id=" + account_id +
+                ", match_id=" + match_id +
+                ", backpack_0=" + backpack_0 +
+                ", backpack_1=" + backpack_1 +
+                ", backpack_2=" + backpack_2 +
+                ", camps_stacked=" + camps_stacked +
+                ", creeps_stacked=" + creeps_stacked +
+                ", gold=" + gold +
+                ", kda=" + kda +
+                ", gold_per_min=" + gold_per_min +
+                ", hero_damage=" + hero_damage +
+                ", hero_id=" + hero_id +
+                ", iteam_0=" + iteam_0 +
+                ", iteam_1=" + iteam_1 +
+                ", iteam_2=" + iteam_2 +
+                ", iteam_3=" + iteam_3 +
+                ", iteam_4=" + iteam_4 +
+                ", iteam_5=" + iteam_5 +
+                ", kills=" + kills +
+                ", level=" + level +
+                ", win=" + win +
+                ", lose=" + lose +
+                ", xp_per_min=" + xp_per_min +
+                ", personaname='" + personaname + '\'' +
+                ", name='" + name + '\'' +
+                ", radiant_win=" + radiant_win +
+                ", isRadiant=" + isRadiant +
+                '}';
     }
 
-    public void setTeamId(ObjectId teamId) {
-        this.teamId = teamId;
-    }
-
-    public Player(){
+    public PlayerModel(){
 
 
 }
-    private ObjectId teamId;
-    private int accountId;
-    private int cluster;
+
+private int cluster,death;
+
+    public int getDeath() {
+        return death;
+    }
+
+    public void setDeath(int death) {
+        this.death = death;
+    }
+
     private int palyer_solt;
-    private int assists,account_id;
+    private int assists,account_id,match_id;
     private int backpack_0;
     private int backpack_1;
+
+    public int getAccount_id() {
+        return account_id;
+    }
+
+    public void setAccount_id(int account_id) {
+        this.account_id = account_id;
+    }
+
+    public int getMatch_id() {
+        return match_id;
+    }
+
+    public void setMatch_id(int match_id) {
+        this.match_id = match_id;
+    }
+
     private int backpack_2;
     private int camps_stacked;
     private int creeps_stacked;
@@ -34,21 +83,6 @@ public class Player {
     private int  hero_id;
     private int  iteam_0,iteam_1,iteam_2,iteam_3,iteam_4,iteam_5,kills,level,win,lose;
     private int  xp_per_min;
-    private int integration=0;
-    private int deathsSum=0;
-    private int  killsSum=0;
-    private int  matchSum=0;
-    //private double  per_gold=0;
-    private String name;
-private List<Integer> matchIdList=new ArrayList<Integer>();
-
-    public List<Integer> getMatchIdList() {
-        return matchIdList;
-    }
-
-    public void setMatchIdList(List<Integer> matchIdList) {
-        this.matchIdList = matchIdList;
-    }
 
     public int getCluster() {
         return cluster;
@@ -72,22 +106,6 @@ private List<Integer> matchIdList=new ArrayList<Integer>();
 
     public void setAssists(int assists) {
         this.assists = assists;
-    }
-
-    public int getAccount_id() {
-        return account_id;
-    }
-
-    public void setAccount_id(int account_id) {
-        this.account_id = account_id;
-    }
-
-    public int getMatchSum() {
-        return matchSum;
-    }
-
-    public void setMatchSum(int matchSum) {
-        this.matchSum = matchSum;
     }
 
     public int getBackpack_0() {
@@ -136,6 +154,14 @@ private List<Integer> matchIdList=new ArrayList<Integer>();
 
     public void setGold(int gold) {
         this.gold = gold;
+    }
+
+    public int getKda() {
+        return kda;
+    }
+
+    public void setKda(int kda) {
+        this.kda = kda;
     }
 
     public int getGold_per_min() {
@@ -250,30 +276,12 @@ private List<Integer> matchIdList=new ArrayList<Integer>();
         this.xp_per_min = xp_per_min;
     }
 
-
-
-    public int getIntegration() {
-        return integration;
+    public String getPersonaname() {
+        return personaname;
     }
 
-    public void setIntegration(int integration) {
-        this.integration = integration;
-    }
-
-    public int getDeathsSum() {
-        return deathsSum;
-    }
-
-    public void setDeathsSum(int deathsSum) {
-        this.deathsSum = deathsSum;
-    }
-
-    public int getKillsSum() {
-        return killsSum;
-    }
-
-    public void setKillsSum(int killsSum) {
-        this.killsSum = killsSum;
+    public void setPersonaname(String personaname) {
+        this.personaname = personaname;
     }
 
     public String getName() {
@@ -284,25 +292,26 @@ private List<Integer> matchIdList=new ArrayList<Integer>();
         this.name = name;
     }
 
-    public int getKda() {
-        return kda;
+    public boolean isRadiant_win() {
+        return radiant_win;
     }
 
-
-
-    public int getAccountId() {
-        return accountId;
+    public void setRadiant_win(boolean radiant_win) {
+        this.radiant_win = radiant_win;
     }
 
-
-
-    public void setAccountId(int accountId) {
-        this.accountId = accountId;
+    public boolean isRadiant() {
+        return isRadiant;
     }
 
-    public void setKda(int kda) {
-        this.kda = kda;
+    public void setRadiant(boolean radiant) {
+        isRadiant = radiant;
     }
+
+    private String personaname,name;
+    private boolean radiant_win,isRadiant;
+
+
 
 
 }

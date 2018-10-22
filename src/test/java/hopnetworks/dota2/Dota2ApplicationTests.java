@@ -1,6 +1,7 @@
 package hopnetworks.dota2;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -9,14 +10,19 @@ import com.mongodb.util.JSON;
 import hopnetworks.dota2.DAO.MatchModelRepository;
 import hopnetworks.dota2.DAO.MatchRepository;
 import hopnetworks.dota2.DAO.TeamRepository;
+import hopnetworks.dota2.Model.PlayerModel;
+
 import hopnetworks.dota2.Utils.HttpRequestUtil;
 import hopnetworks.dota2.domain.Match;
 import hopnetworks.dota2.domain.MatchModel;
+import hopnetworks.dota2.domain.Player;
 import hopnetworks.dota2.domain.Team;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
@@ -26,6 +32,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -61,21 +68,34 @@ match.setUserName("hops");
         matchModel.setMatchJson((DBObject) JSON.parse(result));
         DBObject matchJson=(DBObject) JSON.parse(result);//将返回结果转换成可供DB存储的数据
         DBObject playersJson=(DBObject)matchJson.get("players");
+        matchModel.setMatchId(22);
         playersJson.get("0");
         logger .info( "0号选手数据");
         System.out.println( playersJson.get("0"));
         System.out.println(result);
 Team team=new Team();
 team.setPlayersJson((DBObject) ((DBObject) JSON.parse(result)).get("players"));
+ObjectId objectId;
+//team.setTeamId("5bcd9641ac014942a862543b");
 //System.out.println( JSON.parse(result).get("players"));
+
 teamRepository.save(team);
 
       JSONObject jsonObject=com.alibaba.fastjson.JSON.parseObject(result);
+
+        //PlayerModel playerModel= com.alibaba.fastjson.JSON.parseObject(result,PlayerModel.class);
+        JSONArray jsonArray = JSONArray.parseArray(playersJson.toString());
+        System.out.println("0号选手数据JSOn"+jsonArray);
 //collection=matchModel.getMatchJson().get("Players");
+      //  PlayerModelgruop playerModelgruop = com.alibaba.fastjson.JSON.parseObject(playersJson.toString(), PlayerModelgruop.class);
+        List<PlayerModel> playerModel= com.alibaba.fastjson.JSON.parseArray(playersJson.toString(),PlayerModel.class);
+        System.out.println("转换为JAVA对象成功"+playerModel);
 
-matchModelRepository.save(matchModel);
+        matchModelRepository.save(matchModel);
+        Player player=new Player();
+        BeanUtils.copyProperties(playerModel.get(0),player);
 
-
+        System.out.println(player.getCluster());
     }
 
 }

@@ -7,13 +7,13 @@ public class MatchModel {
 
 
     @Id
-    private String matchId;
+    private int matchId;
 
-    public String getMatchId() {
+    public int getMatchId() {
         return matchId;
     }
 
-    public void setMatchId(String matchId) {
+    public void setMatchId(int matchId) {
         this.matchId = matchId;
     }
 
