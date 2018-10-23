@@ -2,7 +2,9 @@ package hopnetworks.dota2.domain;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class Match {
     public String getMatchId() {
         return matchId;

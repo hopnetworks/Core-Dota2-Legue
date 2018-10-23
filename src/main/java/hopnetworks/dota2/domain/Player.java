@@ -1,17 +1,21 @@
 package hopnetworks.dota2.domain;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Document
 public class Player {
     public ObjectId getTeamId() {
         return teamId;
     }
 
     public void setTeamId(ObjectId teamId) {
+
         this.teamId = teamId;
+
     }
 
     public Player(){
@@ -19,6 +23,7 @@ public class Player {
 
 }
     private ObjectId teamId;
+    @Id
     private int accountId;
     private int cluster;
     private int palyer_solt;
@@ -38,6 +43,7 @@ public class Player {
     private int deathsSum=0;
     private int  killsSum=0;
     private int  matchSum=0;
+
     //private double  per_gold=0;
     private String name;
 private List<Integer> matchIdList=new ArrayList<Integer>();

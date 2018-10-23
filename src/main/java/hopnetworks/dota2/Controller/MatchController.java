@@ -20,6 +20,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ import java.util.List;
 @Description
 
 */
+@Controller
 public class MatchController {
 @Autowired
     private MatchRepository matchRepository;
@@ -52,8 +54,8 @@ private MatchModelRepository matchModelRepository;
     Team team=new Team();
     Player player=new Player();
     MatchModel matchModel=new MatchModel();
-    ObjectId teamObjectId=null;
-    ObjectId anotherTeamObjectId=null;
+    ObjectId winTeamObjectId=null;
+    ObjectId loseTeamObjectId=null;
     //两个队伍的objectId,即teamId
     String url = "https://api.opendota.com/api/matches/"+matchId;
     //post请求
@@ -64,19 +66,15 @@ private MatchModelRepository matchModelRepository;
     //发送http请求并返回结果
     String result= httpRequestUtil.client(url,method,params);
 
-
     DBObject matchJson=(DBObject) JSON.parse(result);//将返回结果转换成可供DB存储的数据
     DBObject playersJson=(DBObject)matchJson.get("players");
-    playersJson.get("0");
-    System.out.println( playersJson.get("0"));
-    team.setPlayersJson( playersJson);
-   // player=playerRepository.findByAccount_id()
     matchModel.setMatchJson(matchJson);
     matchModel.setMatchId(matchId);
-    JSONArray jsonArray = JSONArray.parseArray(playersJson.toString());
+
     List<PlayerModel> playerModel= com.alibaba.fastjson.JSON.parseArray(playersJson.toString(),PlayerModel.class);
 
 //jsonArray.toJavaObject(PlayerModel);
+    //保存10位选手的数据
     try {
         for (int i = 0; i < 10; i++) {
 
@@ -84,73 +82,56 @@ private MatchModelRepository matchModelRepository;
             if (player == null) {
                 BeanUtils.copyProperties(playerModel.get(i),player);
             }
-            BeanUtils.copyProperties(playerModel.get(i),player);
-            player.setKillsSum(player.getKillsSum()+playerModel.get(i).getKills());
-            player.setDeathsSum(player.getDeathsSum()+playerModel.get(i).getDeath());
-            player.getMatchIdList().add(playerModel.get(i).getMatch_id());
-            System.out.println(player);
-            if(teamObjectId==null){
-
-                teamObjectId=player.getTeamId();
-                anotherTeamObjectId=player.getTeamId();
-            }
-
-                if (teamObjectId.equals(anotherTeamObjectId)) {
-
-                    anotherTeamObjectId=player.getTeamId();
+            else {
+                BeanUtils.copyProperties(playerModel.get(i), player);
+                player.setKillsSum(player.getKillsSum() + playerModel.get(i).getKills());
+                player.setDeathsSum(player.getDeathsSum() + playerModel.get(i).getDeath());
+                player.getMatchIdList().add(playerModel.get(i).getMatch_id());
+                System.out.println(player);
+                if (player.getWin() == 1) {
+                    player.setIntegration(player.getIntegration() + 1);
+                    if (winTeamObjectId == null) {
+                        winTeamObjectId = player.getTeamId();
+                    }
+                } else {
+                    if (loseTeamObjectId == null) {
+                        loseTeamObjectId = player.getTeamId();
+                    }
                 }
-
-
-
-            if(player.getWin()==1){
-                player.setIntegration(player.getIntegration()+1);
-            }
-playerRepository.save(player);
-            //jsonArray.get(0).
+                playerRepository.save(player);
+            }   //jsonArray.get(0).
 
         }
     }catch (Exception e){
 
 
     }
-    for (int i = 0; i < 10; i++) {
-        if (teamObjectId.equals(anotherTeamObjectId)) {
 
-            anotherTeamObjectId=player.getTeamId();
-        }
-        break;
-    }
     try{
         //找到选手所在队伍
-        team=teamRepository.findByObjectId(player.getTeamId());
+        team=teamRepository.findByTeamId( winTeamObjectId);
         if(team==null) {
             //有一名选手不在队伍中
             return false;
         }
 
-        if(player.getWin()==1){
          team.setIntegration(team.getIntegration()+1);
          team.setGameSum(team.getGameSum()+1);
-        }
-        Team anotherTeam=new Team();
-        if(player.getTeamId().equals(teamObjectId)){
-         anotherTeam=teamRepository.findByObjectId(anotherTeamObjectId);
-        }
-        else{
-       anotherTeam=teamRepository.findByObjectId(teamObjectId);
-        }
-        anotherTeam.setGameSum(anotherTeam.getGameSum()+1);
 
-teamRepository.save(team);
-        teamRepository.save( anotherTeam);
+        Team anotherTeam=teamRepository.findByTeamId(loseTeamObjectId);
+
+        anotherTeam.setGameSum(anotherTeam.getGameSum()+1);
+        teamRepository.save(team);
+        teamRepository.save(anotherTeam);
+
     }
     catch (Exception e){
 
-
+        return false;
     }
     //DBObject bson=(DBObject) JSON.parse(result);
 //System.out.println( JSON.parse(result).get("players"));
-    teamRepository.save(team);
+
     matchModelRepository.save(matchModel);
   System.out.println(result);
   return  true ;

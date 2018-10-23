@@ -2,7 +2,9 @@ package hopnetworks.dota2.domain;
 
 import com.mongodb.DBObject;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class MatchModel {
 
 

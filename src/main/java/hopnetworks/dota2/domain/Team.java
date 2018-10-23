@@ -3,10 +3,11 @@ package hopnetworks.dota2.domain;
 import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Document
 public class Team {
    @Id
 private ObjectId teamId;
@@ -14,8 +15,8 @@ private ObjectId teamId;
 private DBObject playersJson;;
     private String teamName;
 
-    public ObjectId getTeamId() {
-        return teamId;
+    public String getTeamId() {
+        return teamId.toString();
     }
 
     public void setTeamId(ObjectId teamId) {
