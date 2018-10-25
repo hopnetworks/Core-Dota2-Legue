@@ -49,11 +49,11 @@ public class Dota2ApplicationTests {
     @Test
     public void contextLoads() {
 Match match=new Match();
-match.setMatchId("match1");
+match.setMatchId(261152);
 match.setPassWord("155");
 match.setUserName("hops");
         logger .info("Mongodb虚拟数据插入测试成功") ;
-        matchRepository.save(match);
+
 
         String url = "https://api.opendota.com/api/matches/2611524";
         //post请求
@@ -68,19 +68,23 @@ match.setUserName("hops");
         matchModel.setMatchJson((DBObject) JSON.parse(result));
         DBObject matchJson=(DBObject) JSON.parse(result);//将返回结果转换成可供DB存储的数据
         DBObject playersJson=(DBObject)matchJson.get("players");
+   Match match1= com.alibaba.fastjson.JSON.parseObject(matchJson.toString(), Match.class);
+        matchRepository.save(match1);
+        logger .info( "Match结果");
+   System.out.println(match1);
         matchModel.setMatchId(22);
         playersJson.get("0");
-        logger .info( "0号选手数据");
-        System.out.println( playersJson.get("0"));
+        logger .info( "远程服务器返回结果");
+
         System.out.println(result);
 Team team=new Team();
-team.setPlayersJson((DBObject) ((DBObject) JSON.parse(result)).get("players"));
-ObjectId objectId;
-//team.setTeamId("5bcd9641ac014942a862543b");
+//team.setPlayersJson((DBObject) ((DBObject) JSON.parse(result)).get("players"));
+ObjectId objectId=new ObjectId("5bcef99ccbfcce3ac8ebf646");
+team.setTeamId(objectId);
 //System.out.println( JSON.parse(result).get("players"));
-
+team.setTeamName("无名队");
 teamRepository.save(team);
-
+        logger .info( "添加默认队伍");
       JSONObject jsonObject=com.alibaba.fastjson.JSON.parseObject(result);
 
         //PlayerModel playerModel= com.alibaba.fastjson.JSON.parseObject(result,PlayerModel.class);

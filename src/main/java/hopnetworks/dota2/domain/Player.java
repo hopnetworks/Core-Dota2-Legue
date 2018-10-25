@@ -46,6 +46,7 @@ public class Player {
 
     //private double  per_gold=0;
     private String name;
+
 private List<Integer> matchIdList=new ArrayList<Integer>();
 
     public List<Integer> getMatchIdList() {

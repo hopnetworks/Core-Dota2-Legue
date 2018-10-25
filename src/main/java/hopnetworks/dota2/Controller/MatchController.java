@@ -13,6 +13,8 @@ import hopnetworks.dota2.DAO.TeamRepository;
 import hopnetworks.dota2.Model.PlayerModel;
 
 import hopnetworks.dota2.Utils.HttpRequestUtil;
+import hopnetworks.dota2.Utils.ResourceBundleUtil;
+import hopnetworks.dota2.domain.Match;
 import hopnetworks.dota2.domain.MatchModel;
 import hopnetworks.dota2.domain.Player;
 import hopnetworks.dota2.domain.Team;
@@ -47,17 +49,21 @@ private MatchModelRepository matchModelRepository;
     private TeamRepository teamRepository;
     @Autowired
     private PlayerRepository playerRepository;
-
-@RequestMapping(value = "/insertmatch")
+    final static String dotaApi=  ResourceBundleUtil.getSystemString("dotaApi") ;//APi 服务器地址
+    final static String defaultTeamId=  ResourceBundleUtil.getSystemString("defaultTeamId") ;//私钥
+    private  static ObjectId defaultTeamObjectId=new ObjectId(defaultTeamId);
+    @RequestMapping(value = "/insertmatch")
 @ResponseBody
-    public boolean inserMatvh(int  matchId){
+    public boolean inserMatch(int  matchId){
     Team team=new Team();
     Player player=new Player();
-    MatchModel matchModel=new MatchModel();
+
+    Match match=new Match();
     ObjectId winTeamObjectId=null;
     ObjectId loseTeamObjectId=null;
     //两个队伍的objectId,即teamId
-    String url = "https://api.opendota.com/api/matches/"+matchId;
+    String url = dotaApi+"api/matches/"+matchId;
+    System.out.println(url);
     //post请求
     HttpMethod method =HttpMethod.GET;
     // 封装参数，千万不要替换为Map与HashMap，否则参数无法传递
@@ -65,22 +71,28 @@ private MatchModelRepository matchModelRepository;
   //  params.add("access_token", "xxxxx");
     //发送http请求并返回结果
     String result= httpRequestUtil.client(url,method,params);
-
     DBObject matchJson=(DBObject) JSON.parse(result);//将返回结果转换成可供DB存储的数据
     DBObject playersJson=(DBObject)matchJson.get("players");
-    matchModel.setMatchJson(matchJson);
-    matchModel.setMatchId(matchId);
+
+     match= com.alibaba.fastjson.JSON.parseObject(matchJson.toString(), Match.class);
+    match.setMatchId(matchId);
 
     List<PlayerModel> playerModel= com.alibaba.fastjson.JSON.parseArray(playersJson.toString(),PlayerModel.class);
 
 //jsonArray.toJavaObject(PlayerModel);
     //保存10位选手的数据
-    try {
-        for (int i = 0; i < 10; i++) {
 
+        for (int i = 0; i < 10; i++) {
+            try {
             player = playerRepository.findByAccountId(playerModel.get(i).getAccount_id());
             if (player == null) {
+                player=new Player();
+                System.out.println(i+"名选手数据为空");
                 BeanUtils.copyProperties(playerModel.get(i),player);
+                winTeamObjectId=loseTeamObjectId=defaultTeamObjectId;
+                player.setTeamId(defaultTeamObjectId);
+                player.setAccountId(i);
+          //   player.setTeamId();
             }
             else {
                 BeanUtils.copyProperties(playerModel.get(i), player);
@@ -98,13 +110,13 @@ private MatchModelRepository matchModelRepository;
                         loseTeamObjectId = player.getTeamId();
                     }
                 }
-                playerRepository.save(player);
+
             }   //jsonArray.get(0).
+            playerRepository.save(player);
+       }catch (Exception e){
 
+            System.out.println(e);
         }
-    }catch (Exception e){
-
-
     }
 
     try{
@@ -119,8 +131,11 @@ private MatchModelRepository matchModelRepository;
          team.setGameSum(team.getGameSum()+1);
 
         Team anotherTeam=teamRepository.findByTeamId(loseTeamObjectId);
+        if(loseTeamObjectId.equals(winTeamObjectId)){
 
-        anotherTeam.setGameSum(anotherTeam.getGameSum()+1);
+        }else
+        {anotherTeam.setGameSum(anotherTeam.getGameSum()+1);
+        }
         teamRepository.save(team);
         teamRepository.save(anotherTeam);
 
@@ -132,7 +147,7 @@ private MatchModelRepository matchModelRepository;
     //DBObject bson=(DBObject) JSON.parse(result);
 //System.out.println( JSON.parse(result).get("players"));
 
-    matchModelRepository.save(matchModel);
+    matchRepository.save(match);
   System.out.println(result);
   return  true ;
 }
@@ -140,7 +155,14 @@ private MatchModelRepository matchModelRepository;
 
 
 
+    @RequestMapping(value = "/findallmatch")
+    @ResponseBody
+    public List<Match> findAllMatch(){
+       // System.out.println( matchModelRepository.findAll().get(0).getMatchId());
+        // teamRepository.findAll()
+        return matchRepository.findAll() ;
 
+    }
 
 
 }

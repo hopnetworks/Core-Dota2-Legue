@@ -12,7 +12,7 @@ public class Team {
    @Id
 private ObjectId teamId;
 
-private DBObject playersJson;;
+private List<DBObject> playersJson;;
     private String teamName;
 
     public String getTeamId() {
@@ -23,11 +23,11 @@ private DBObject playersJson;;
         this.teamId = teamId;
     }
 
-    public DBObject getPlayersJson() {
+    public List<DBObject> getPlayersJson() {
         return playersJson;
     }
 
-    public void setPlayersJson(DBObject playersJson) {
+    public void setPlayersJson(List<DBObject> playersJson) {
         this.playersJson = playersJson;
     }
 
