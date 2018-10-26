@@ -43,9 +43,18 @@ public class Player {
     private int deathsSum=0;
     private int  killsSum=0;
     private int  matchSum=0;
+    private int  assistsSum=0;
+
+    public int getAssistsSum() {
+        return assistsSum;
+    }
+
+    public void setAssistsSum(int assistsSum) {
+        this.assistsSum = assistsSum;
+    }
 
     //private double  per_gold=0;
-    private String name;
+    private String name="迭名";
 
 private List<Integer> matchIdList=new ArrayList<Integer>();
 

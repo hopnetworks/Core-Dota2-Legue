@@ -8,6 +8,9 @@ import hopnetworks.dota2.Utils.HttpRequestUtil;
 import hopnetworks.dota2.domain.Player;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 import static hopnetworks.dota2.Controller.MatchController.dotaApi;
@@ -27,10 +31,11 @@ public class PlayerController {
     PlayerRepository playerRepository;
     @Autowired
     TeamRepository teamRepository;
-
+    @Resource
+    private MongoTemplate mongoTemplate;
     @RequestMapping(value = "/insertplayer")
     @ResponseBody
-    public int insertPlayer(String playerName,String teamId,int  accountId){
+    public int insertPlayer(String teamId,int  accountId){
         Player player=new Player();
 //        String url = dotaApi+"api/players/"+accountId;
 //
@@ -44,6 +49,7 @@ public class PlayerController {
 //        DBObject playersJson=(DBObject)matchJson.get("profile");
 //        player.setName(playersJson.get("name").toString());
 try{
+
     player.setAccountId(accountId);
     ObjectId objectId=new ObjectId(teamId);
     player.setTeamId(objectId);
@@ -53,10 +59,12 @@ catch (Exception e){
     return 0;
 }
     }
-    @RequestMapping(value = "/findbyteamid")
+        @RequestMapping(value = "/findbyteamid")
     @ResponseBody
     public List<Player> findPlayerByTeamId(String teamId){
+            System.out.println(teamId);
         ObjectId objectId=new ObjectId(teamId);
+        System.out.println(objectId);
         return playerRepository.findByTeamId(objectId);
     }
     @RequestMapping(value = "/deletebyteamid")
@@ -66,5 +74,29 @@ catch (Exception e){
 
                 teamRepository.delete(teamRepository.findByTeamId(objectId));
         return true;
+    }
+
+    @RequestMapping(value = "/deleteplayer")
+    @ResponseBody
+    public boolean delPlayer(int accountId){
+
+        try {
+            Criteria criteria = Criteria.where("accountId").is(accountId);
+            Query query = new Query(criteria);
+            mongoTemplate.remove(query,Player.class);
+            System.out.println("根据ID删除成功");
+        }
+        catch (Exception e){
+
+        }
+        // teamRepository.findAll()
+        return  true ;
+    }
+    @RequestMapping(value = "/findallplayer")
+    @ResponseBody
+    public List<Player> findallteam(){
+        //  System.out.println(teamRepository.findAll().get(0).getTeamId());
+        // teamRepository.findAll()
+        return playerRepository.findAll() ;
     }
     }

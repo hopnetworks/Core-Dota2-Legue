@@ -21,6 +21,9 @@ import hopnetworks.dota2.domain.Team;
 import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
@@ -28,6 +31,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -43,6 +47,9 @@ public class MatchController {
     private MatchRepository matchRepository;
 @Autowired
 private MatchModelRepository matchModelRepository;
+    @Resource
+    private MongoTemplate mongoTemplate;
+
 @Autowired
     HttpRequestUtil httpRequestUtil;
     @Autowired
@@ -99,10 +106,12 @@ private MatchModelRepository matchModelRepository;
                 player.setKillsSum(player.getKillsSum() + playerModel.get(i).getKills());
                 player.setDeathsSum(player.getDeathsSum() + playerModel.get(i).getDeath());
                 player.getMatchIdList().add(playerModel.get(i).getMatch_id());
+                player.setAssistsSum(player.getAssistsSum()+playerModel.get(i).getAssists());
                 System.out.println(player);
                 if (player.getWin() == 1) {
                     player.setIntegration(player.getIntegration() + 1);
                     if (winTeamObjectId == null) {
+
                         winTeamObjectId = player.getTeamId();
                     }
                 } else {
@@ -129,12 +138,13 @@ private MatchModelRepository matchModelRepository;
 
          team.setIntegration(team.getIntegration()+1);
          team.setGameSum(team.getGameSum()+1);
-
+match.setWin_team_name(team.getTeamName());
         Team anotherTeam=teamRepository.findByTeamId(loseTeamObjectId);
         if(loseTeamObjectId.equals(winTeamObjectId)){
 
         }else
         {anotherTeam.setGameSum(anotherTeam.getGameSum()+1);
+            match.setLose_team_name(anotherTeam.getTeamName());
         }
         teamRepository.save(team);
         teamRepository.save(anotherTeam);
@@ -164,5 +174,20 @@ private MatchModelRepository matchModelRepository;
 
     }
 
+    @RequestMapping(value = "/deletematch")
+    @ResponseBody
+    public boolean delsteteam(int matchId){
 
+        try {
+            Criteria criteria = Criteria.where("matchId").is(matchId);
+            Query query = new Query(criteria);
+            mongoTemplate.remove(query,Match.class);
+            System.out.println("根据ID删除成功");
+        }
+        catch (Exception e){
+
+        }
+        // teamRepository.findAll()
+        return  true ;
+    }
 }

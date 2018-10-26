@@ -3,6 +3,7 @@ package hopnetworks.dota2.Controller;
 import hopnetworks.dota2.DAO.PlayerRepository;
 import hopnetworks.dota2.DAO.TeamRepository;
 import hopnetworks.dota2.domain.Team;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +30,23 @@ team.setTeamName(teamName);
     @RequestMapping(value = "/findallteam")
     @ResponseBody
     public List<Team> findallteam(){
-        System.out.println(teamRepository.findAll().get(0).getTeamId());
+      //  System.out.println(teamRepository.findAll().get(0).getTeamId());
        // teamRepository.findAll()
     return teamRepository.findAll() ;
-
     }
+    @RequestMapping(value = "/deleteteam")
+    @ResponseBody
+    public boolean delsteteam(String teamId){
+        ObjectId objectId=new ObjectId(teamId);
+        try {
+            teamRepository.deleteById(teamId);
+            System.out.println("根据ID删除成功");
+        }
+        catch (Exception e){
+            teamRepository.delete(teamRepository.findByTeamId(new ObjectId(teamId)));
 
+        }
+        // teamRepository.findAll()
+        return  true ;
+    }
 }

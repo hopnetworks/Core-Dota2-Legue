@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -218,8 +219,12 @@ private List<Player> players=new ArrayList<Player>();
         this.skill = skill;
     }
 
-    public int getStart_time() {
-        return start_time;
+    public String getStart_time() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(start_time * 1000);//转换为毫秒
+        Date date = calendar.getTime();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        return format.format(date);
     }
 
     public void setStart_time(int start_time) {
@@ -280,9 +285,23 @@ private List<Player> players=new ArrayList<Player>();
     private int          version;
     private int          loss, win;
 
+    public String getWin_team_name() {
+        return win_team_name;
+    }
 
+    public void setWin_team_name(String win_team_name) {
+        this.win_team_name = win_team_name;
+    }
 
+    public String getLose_team_name() {
+        return lose_team_name;
+    }
 
+    public void setLose_team_name(String lose_team_name) {
+        this.lose_team_name = lose_team_name;
+    }
+
+    private String win_team_name,lose_team_name;
 
 
 

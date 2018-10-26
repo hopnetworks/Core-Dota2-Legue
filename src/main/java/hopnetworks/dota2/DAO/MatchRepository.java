@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface MatchRepository  extends MongoRepository<Match, String> {
 
 
-
+    Match findByMatchId(int matchId);
 
 
 }
