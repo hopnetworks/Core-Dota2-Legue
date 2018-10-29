@@ -6,6 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+/**
+@Autor zhuoyj[hopnetworks]
+@Date 2018/10/29
+@function 跨域请求设置
+@Description
+
+*/
 @Configuration
 public class CrossDomainConfig {
 

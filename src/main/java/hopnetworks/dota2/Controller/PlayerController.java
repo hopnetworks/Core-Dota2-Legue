@@ -49,7 +49,6 @@ public class PlayerController {
 //        DBObject playersJson=(DBObject)matchJson.get("profile");
 //        player.setName(playersJson.get("name").toString());
 try{
-
     player.setAccountId(accountId);
     ObjectId objectId=new ObjectId(teamId);
     player.setTeamId(objectId);
@@ -71,7 +70,6 @@ catch (Exception e){
     @ResponseBody
     public boolean deletebyteamid(String teamId){
         ObjectId objectId=new ObjectId(teamId);
-
                 teamRepository.delete(teamRepository.findByTeamId(objectId));
         return true;
     }

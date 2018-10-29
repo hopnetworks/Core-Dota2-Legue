@@ -36,7 +36,7 @@ team.setTeamName(teamName);
     }
     @RequestMapping(value = "/deleteteam")
     @ResponseBody
-    public boolean delsteteam(String teamId){
+    public boolean deleteTeam(String teamId){
         ObjectId objectId=new ObjectId(teamId);
         try {
             teamRepository.deleteById(teamId);

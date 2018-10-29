@@ -5,10 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Document
 public class Match {
@@ -220,11 +217,11 @@ private List<Player> players=new ArrayList<Player>();
     }
 
     public String getStart_time() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(start_time * 1000);//转换为毫秒
-        Date date = calendar.getTime();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        return format.format(date);
+        String formats="yyyy-MM-dd HH:mm:ss";
+        String date = new SimpleDateFormat(formats, Locale.CHINA).format(new Date(start_time*1000));
+
+
+        return date;
     }
 
     public void setStart_time(int start_time) {

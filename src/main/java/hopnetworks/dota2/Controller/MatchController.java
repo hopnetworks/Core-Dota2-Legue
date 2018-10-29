@@ -13,6 +13,7 @@ import hopnetworks.dota2.DAO.TeamRepository;
 import hopnetworks.dota2.Model.PlayerModel;
 
 import hopnetworks.dota2.Utils.HttpRequestUtil;
+import hopnetworks.dota2.Utils.OrderUniqueNum;
 import hopnetworks.dota2.Utils.ResourceBundleUtil;
 import hopnetworks.dota2.domain.Match;
 import hopnetworks.dota2.domain.MatchModel;
@@ -57,8 +58,13 @@ private MatchModelRepository matchModelRepository;
     @Autowired
     private PlayerRepository playerRepository;
     final static String dotaApi=  ResourceBundleUtil.getSystemString("dotaApi") ;//APi 服务器地址
+    //默认队伍ID（字符串类型）
     final static String defaultTeamId=  ResourceBundleUtil.getSystemString("defaultTeamId") ;//私钥
+
+    //默认队伍ID
     private  static ObjectId defaultTeamObjectId=new ObjectId(defaultTeamId);
+
+    //录入比赛结果
     @RequestMapping(value = "/insertmatch")
 @ResponseBody
     public boolean inserMatch(int  matchId){
@@ -94,11 +100,19 @@ private MatchModelRepository matchModelRepository;
             player = playerRepository.findByAccountId(playerModel.get(i).getAccount_id());
             if (player == null) {
                 player=new Player();
-                System.out.println(i+"名选手数据为空");
+                System.out.println(i+"名选手没有所属队伍");
                 BeanUtils.copyProperties(playerModel.get(i),player);
                 winTeamObjectId=loseTeamObjectId=defaultTeamObjectId;
                 player.setTeamId(defaultTeamObjectId);
                 player.setAccountId(i);
+                if(playerModel.get(i).getAccount_id()!=0){
+                player.setAccountId(playerModel.get(i).getAccount_id());
+                }
+                player.setKillsSum(player.getKillsSum() + playerModel.get(i).getKills());
+                player.setDeathsSum(player.getDeathsSum() + playerModel.get(i).getDeath());
+                player.getMatchIdList().add(playerModel.get(i).getMatch_id());
+                player.setAssistsSum(player.getAssistsSum()+playerModel.get(i).getAssists());
+
           //   player.setTeamId();
             }
             else {
@@ -107,11 +121,9 @@ private MatchModelRepository matchModelRepository;
                 player.setDeathsSum(player.getDeathsSum() + playerModel.get(i).getDeath());
                 player.getMatchIdList().add(playerModel.get(i).getMatch_id());
                 player.setAssistsSum(player.getAssistsSum()+playerModel.get(i).getAssists());
-                System.out.println(player);
                 if (player.getWin() == 1) {
                     player.setIntegration(player.getIntegration() + 1);
                     if (winTeamObjectId == null) {
-
                         winTeamObjectId = player.getTeamId();
                     }
                 } else {
@@ -135,15 +147,14 @@ private MatchModelRepository matchModelRepository;
             //有一名选手不在队伍中
             return false;
         }
-
          team.setIntegration(team.getIntegration()+1);
          team.setGameSum(team.getGameSum()+1);
-match.setWin_team_name(team.getTeamName());
+      match.setWin_team_name(team.getTeamName());
         Team anotherTeam=teamRepository.findByTeamId(loseTeamObjectId);
         if(loseTeamObjectId.equals(winTeamObjectId)){
 
         }else
-        {anotherTeam.setGameSum(anotherTeam.getGameSum()+1);
+        {    anotherTeam.setGameSum(anotherTeam.getGameSum()+1);
             match.setLose_team_name(anotherTeam.getTeamName());
         }
         teamRepository.save(team);
