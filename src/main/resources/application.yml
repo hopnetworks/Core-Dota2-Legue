@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/dota2data
+      uri: mongodb://dota2:dota2@mongodb:8887/dota2data
                          ##   username: authmanager
 #      password: hopnetworks
 #      database: dota2data
@@ -10,10 +10,10 @@ server:
   port:  8001
   #https加密端口号 443
 #  server.port=443
-#  ssl:
-#    #SSL证书路径
-#    key-store: classpath:ai.hopnetwork.com.jks
-#    #证书类型
-#    key-store-type: JKS
-#    key-alias: ai.hopnetwork.com
-#    key-store-password: hopnetworks
+  ssl:
+    #SSL证书路径
+    key-store: classpath:ai.hopnetwork.com.jks
+    #证书类型
+    key-store-type: JKS
+    key-alias: ai.hopnetwork.com
+    key-store-password: hopnetworks

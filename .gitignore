@@ -1,5 +1,7 @@
+!/target/dota2.jar
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+
 /MatchModel/
 ### STS ###
 .apt_generated
