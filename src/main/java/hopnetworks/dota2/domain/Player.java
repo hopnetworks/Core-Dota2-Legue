@@ -310,7 +310,15 @@ private List<Integer> matchIdList=new ArrayList<Integer>();
         return accountId;
     }
 
+ private String personaname="迭名";
 
+    public String getPersonaname() {
+        return personaname;
+    }
+
+    public void setPersonaname(String personaname) {
+        this.personaname = personaname;
+    }
 
     public void setAccountId(int accountId) {
         this.accountId = accountId;
